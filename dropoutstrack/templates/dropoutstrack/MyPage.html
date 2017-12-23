@@ -1,0 +1,12 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree %}
+
+{% block title %}
+    Page title
+{% endblock %}
+
+{% block content %}
+{%  include 'includes/tracking_channel.html' %}
+    {% next_button %}
+
+{% endblock %}
