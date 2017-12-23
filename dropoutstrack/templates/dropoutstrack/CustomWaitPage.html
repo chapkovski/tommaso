@@ -1,0 +1,10 @@
+{% extends 'otree/WaitPage.html' %}
+{% load staticfiles otree %}
+{% block title %}{{ title_text }}{% endblock %}
+{% block content %}
+    {{ body_text }}
+    <p>
+        My custom content here.
+    </p>
+    {%  include 'includes/wp_channel.html' %}
+{% endblock %}

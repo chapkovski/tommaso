@@ -34,6 +34,7 @@ class MyPage(CustomPage):
 
 
 class WP(WaitPage):
+    template_name = 'dropoutstrack/CustomWaitPage.html'
     def is_displayed(self):
         return not self.group.has_dropouts()
 

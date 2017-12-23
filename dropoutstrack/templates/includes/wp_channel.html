@@ -3,7 +3,7 @@ P CODE:: {{ participant.code }}
 
 <script>
     var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-    var socket = new WebSocket(ws_scheme + '://' + window.location.host + "/tracking_channel/{{ participant.code }}/{{ group.pk }}");
+    var socket = new WebSocket(ws_scheme + '://' + window.location.host + "/wp_channel/{{ group.pk }}");
 
     // Handle any errors that occur.
     socket.onerror = function (error) {
@@ -13,7 +13,12 @@ P CODE:: {{ participant.code }}
     socket.onopen = function (event) {
         console.log('connected to oTree');
     };
-    // Handle messages sent by the server.
+    socket.onmessage = function (event) {
+        var obj = jQuery.parseJSON(event.data);
+        if (obj.group_has_dropouts == 'yes') {
+            location.reload();
+        }
+    };
 
     ;
     socket.onclose = function (event) {
