@@ -12,6 +12,14 @@ P CODE:: {{ participant.code }}
     // Show a connected message when the WebSocket is opened.
     socket.onopen = function (event) {
         console.log('connected to oTree');
+        var msg = {
+                'player_pk': {{player.pk}},
+            };
+            if (socket.readyState === socket.OPEN) {
+
+                socket.send(JSON.stringify(msg));
+            }
+            ;
     };
     // Handle messages sent by the server.
 

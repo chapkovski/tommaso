@@ -5,6 +5,7 @@ from otree.api import (
 
 from django.db import models as djmodels
 from otree.models import Participant
+import datetime
 
 author = 'Philipp Chapkovski'
 
@@ -19,6 +20,7 @@ class Constants(BaseConstants):
     name_in_url = 'dropoutstrack'
     players_per_group = 2
     num_rounds = 1
+    threshold_sec = 10
 
 
 class Subsession(BaseSubsession):
@@ -26,6 +28,8 @@ class Subsession(BaseSubsession):
 
 
 class Group(BaseGroup):
+    is_dropout = models.BooleanField()
+
     def has_dropouts(self):
         dropouts = []
         for p in self.get_players():
@@ -35,11 +39,15 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):
     def is_dropout(self):
+        last_connection = self.participant.connection_set.first()
+        thresold_met=False
+        if last_connection:
+            now = datetime.datetime.now(datetime.timezone.utc)
+            diff = (now - last_connection.created_at).total_seconds()
+            thresold_met = diff > Constants.threshold_sec and last_connection.event_type == 'disconnected'
         recent_connections = self.participant.connection_set.all()[:2].values_list('event_type', flat=True)
-        _is_dropout = 'disconnected' in recent_connections and \
-                      not 'success_post' in recent_connections \
-                      and len(recent_connections) > 1
-        print('I AM DROPOUT?', _is_dropout)
+        _is_dropout = thresold_met and \
+                      not 'success_post' in recent_connections
         return _is_dropout
 
     testfield = models.CharField()
